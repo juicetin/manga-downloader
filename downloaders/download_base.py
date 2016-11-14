@@ -18,6 +18,13 @@ class MangaDownloader:
     def get_page_paths_from_html(self, html):
         pass
 
+    def pad_number(self, num):
+        """
+        Pads a number with zeroes so it is 3 digits long
+        """
+        num_str = str(num)
+        return '0' * (3-len(num_str)) + num_str
+
     def download_img_from_url(self, page_url, filename):
         """
         Given the page containing the image, extract the image url and save it
@@ -32,3 +39,9 @@ class MangaDownloader:
                 r.raw.decode_content = True
                 shutil.copyfileobj(r.raw, f)
     
+    def download_chapters(self, manga, chapter_nums):
+        """
+        Downloads a list of chapters for a given manga
+        """
+        for chapter_num in chapter_nums:
+            self.download_chapter(manga, chapter_num)

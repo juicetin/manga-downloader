@@ -4,6 +4,8 @@ from pyquery import PyQuery as pq
 import pdb
 import os
 
+import ctypes
+
 from downloaders import download_base
 
 class MangaReaderDownloader(download_base.MangaDownloader):
@@ -27,11 +29,17 @@ class MangaReaderDownloader(download_base.MangaDownloader):
         dropdown_options = q("#pageMenu").children('option')
         page_paths = [pq(d).attr('value') for d in dropdown_options]
         return page_paths
+
+    def glibc_fix():
+        libc = ctypes.cdll.LoadLibrary('libc.so.6')
+        res_init = libc.__res_init
+        res_init()
     
     def download_chapter(self, manga, chapter):
         """
         Downloads specific chapter of manga
         """
+        glibc_fix()
         first_url = '{}/{}/{}'.format(self.base_url, manga, chapter)
         html = request.urlopen(first_url).read().decode('utf-8')
         page_paths = self.get_page_paths_from_html(html)
