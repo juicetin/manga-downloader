@@ -1,5 +1,6 @@
 from abc import ABCMeta
 from abc import abstractmethod
+import os, sys
 
 import requests
 import shutil
@@ -16,6 +17,10 @@ class MangaDownloader:
 
     @abstractmethod
     def get_page_paths_from_html(self, html):
+        pass
+
+    @abstractmethod
+    def format_manga_name(self, name):
         pass
 
     def pad_number(self, num):
@@ -45,3 +50,10 @@ class MangaDownloader:
         """
         for chapter_num in chapter_nums:
             self.download_chapter(manga, chapter_num)
+
+    def cleanup(self, manga, chapter):
+        try:
+            os.rmdir('{}'.format(chapter))
+        except FileNotFoundError:
+            pass
+        print()

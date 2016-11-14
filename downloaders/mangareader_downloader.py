@@ -4,8 +4,6 @@ from pyquery import PyQuery as pq
 import pdb
 import os
 
-import ctypes
-
 from downloaders import download_base
 
 class MangaReaderDownloader(download_base.MangaDownloader):
@@ -30,21 +28,26 @@ class MangaReaderDownloader(download_base.MangaDownloader):
         page_paths = [pq(d).attr('value') for d in dropdown_options]
         return page_paths
 
-    def glibc_fix():
-        libc = ctypes.cdll.LoadLibrary('libc.so.6')
-        res_init = libc.__res_init
-        res_init()
-    
+    def format_manga_name(self, name):
+        name_parts = name.lower().split(' ')
+        return '-'.join(name_parts)
+
     def download_chapter(self, manga, chapter):
         """
         Downloads specific chapter of manga
         """
-        glibc_fix()
+        manga = self.format_manga_name(manga)
         first_url = '{}/{}/{}'.format(self.base_url, manga, chapter)
         html = request.urlopen(first_url).read().decode('utf-8')
+
         page_paths = self.get_page_paths_from_html(html)
-        chapter_str = str(chapter)
-        os.makedirs('{}'.format(chapter_str))
-        for num, page_path in enumerate(page_paths):
-            page_url = '{}{}'.format(self.base_url, page_path)
-            self.download_img_from_url(page_url, '{}/{}.jpg'.format(chapter_str, num))
+        if len(page_paths) == 0:
+            print('Chapter: {} for manga: {} not found on MangaReader.'.format(chapter, manga))
+            self.cleanup(manga, chapter)
+
+        else:
+            chapter_str = str(chapter)
+            os.makedirs('{}'.format(chapter_str))
+            for num, page_path in enumerate(page_paths):
+                page_url = '{}{}'.format(self.base_url, page_path)
+                self.download_img_from_url(page_url, '{}/{}.jpg'.format(chapter_str, self.pad_number(num)))

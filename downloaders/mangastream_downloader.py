@@ -2,7 +2,7 @@ import requests
 from urllib import request
 from pyquery import PyQuery as pq
 import pdb
-import os
+import os, sys
 
 import ctypes
 
@@ -46,19 +46,28 @@ class MangaStreamDownloader(download_base.MangaDownloader):
         try:
             return chapter_urls[0]
         except IndexError:
-            print('Chapter: {} for manga: {} not found on Mangastream.')
+            print('Chapter: {} for manga: {} not found on Mangastream.'.format(chapter, manga))
+            self.cleanup(manga, chapter)
+            return -1
+
+    def format_manga_name(self, name):
+        name_parts = name.lower().split(' ')
+        return '_'.join(name_parts)
     
     def download_chapter(self, manga, chapter):
         """
         Downloads specific chapter of manga
         """
         glibc_fix()
-        # first_url = '{}/{}/{}'.format(self.base_url, manga, chapter)
+        manga = self.format_manga_name(manga)
         first_url = self.get_chapter_url(manga, chapter)
-        html = request.urlopen(first_url).read().decode('utf-8')
-        page_paths = self.get_page_paths_from_html(html)
-        chapter_str = str(chapter)
-        os.makedirs('{}'.format(chapter_str))
-        for num, page_path in enumerate(page_paths):
-            page_url = page_path
-            self.download_img_from_url(page_url, '{}/{}.jpg'.format(chapter_str, self.pad_number(num)))
+        if first_url == -1:
+            sys.exit(2)
+        else:
+            html = request.urlopen(first_url).read().decode('utf-8')
+            page_paths = self.get_page_paths_from_html(html)
+            chapter_str = str(chapter)
+            os.makedirs('{}'.format(chapter_str))
+            for num, page_path in enumerate(page_paths):
+                page_url = page_path
+                self.download_img_from_url(page_url, '{}/{}.jpg'.format(chapter_str, self.pad_number(num)))
