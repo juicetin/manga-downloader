@@ -1,5 +1,7 @@
 from downloaders import mangareader_downloader, mangastream_downloader
 import sys, getopt
+import numpy as np
+import pdb
 
 # NOTE hacky solution for now. Amongst other things, introduce a checker for 
 # which sources have requested chapters available and select an appropriate source 
@@ -14,7 +16,7 @@ def main(argv):
     except IndexError:
         print('main.py -m <manga> -c <chapter>')
         sys.exit(2)
-
+  
     for opt, arg in opts:
         if opt == '-h':
             print('main.py -m <manga> -c <chapter>')
@@ -23,13 +25,13 @@ def main(argv):
             manga = arg
         elif opt in ("-c", "--chapter"):
             chapter = arg
-
+  
     print('Downloading chapter {} from manga: {}'.format(chapter, manga))
 
-    mrd = mangareader_downloader.MangaReaderDownloader()
-    msd = mangastream_downloader.MangaStreamDownloader()
+    # mrd = mangareader_downloader.MangaReaderDownloader()
+    # mrd.download_chapter(manga, chapter)
 
-    mrd.download_chapter(manga, chapter)
+    msd = mangastream_downloader.MangaStreamDownloader()
     msd.download_chapter(manga, chapter)
 
 if __name__ == "__main__":

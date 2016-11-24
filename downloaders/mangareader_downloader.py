@@ -36,10 +36,13 @@ class MangaReaderDownloader(download_base.MangaDownloader):
         """
         Downloads specific chapter of manga
         """
+
+        # Grab URL
         manga = self.format_manga_name(manga)
         first_url = '{}/{}/{}'.format(self.base_url, manga, chapter)
         html = request.urlopen(first_url).read().decode('utf-8')
 
+        # When chapter doesn't exist
         page_paths = self.get_page_paths_from_html(html)
         if len(page_paths) == 0:
             print('Chapter: {} for manga: {} not found on MangaReader.'.format(chapter, manga))

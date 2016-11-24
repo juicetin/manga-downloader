@@ -46,28 +46,38 @@ class MangaStreamDownloader(download_base.MangaDownloader):
         try:
             return chapter_urls[0]
         except IndexError:
-            print('Chapter: {} for manga: {} not found on Mangastream.'.format(chapter, manga))
             self.cleanup(manga, chapter)
             return -1
 
     def format_manga_name(self, name):
         name_parts = name.lower().split(' ')
         return '_'.join(name_parts)
+
+    def get_downloader_name(self):
+        return str(self.__class__()).split('.')[2].split(' ')[0]
     
     def download_chapter(self, manga, chapter):
         """
         Downloads specific chapter of manga
         """
+
+        # Get URL
         glibc_fix()
-        manga = self.format_manga_name(manga)
-        first_url = self.get_chapter_url(manga, chapter)
+        manga_fmtd = self.format_manga_name(manga)
+        first_url = self.get_chapter_url(manga_fmtd, chapter)
+
         if first_url == -1:
-            sys.exit(2)
+            raise ValueError('Chapter ' + str(chapter) + ' for ' + manga + ' is not out yet for ' + self.get_downloader_name())
         else:
+            # Get list of chapter page URLs
             html = request.urlopen(first_url).read().decode('utf-8')
             page_paths = self.get_page_paths_from_html(html)
+
+            # Prepare directory
             chapter_str = str(chapter)
             os.makedirs('{}'.format(chapter_str))
+
+            # Download every page
             for num, page_path in enumerate(page_paths):
                 page_url = page_path
                 self.download_img_from_url(page_url, '{}/{}.jpg'.format(chapter_str, self.pad_number(num)))
