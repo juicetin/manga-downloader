@@ -56,7 +56,7 @@ class MangaStreamDownloader(download_base.MangaDownloader):
     def get_downloader_name(self):
         return str(self.__class__()).split('.')[2].split(' ')[0]
     
-    def download_chapter(self, manga, chapter):
+    def download_chapter_succcessfully(self, manga, chapter):
         """
         Downloads specific chapter of manga
         """
@@ -69,6 +69,7 @@ class MangaStreamDownloader(download_base.MangaDownloader):
         if first_url == -1:
             print('Chapter: {} for manga: {} not found on MangaStream.'.format(chapter, manga))
             self.cleanup(manga, chapter)
+            return False
         else:
             # Get list of chapter page URLs
             html = request.urlopen(first_url).read().decode('utf-8')
@@ -82,3 +83,5 @@ class MangaStreamDownloader(download_base.MangaDownloader):
             for num, page_path in enumerate(page_paths):
                 page_url = page_path
                 self.download_img_from_url(page_url, '{}/{}.jpg'.format(chapter_str, self.pad_number(num)))
+
+            return True

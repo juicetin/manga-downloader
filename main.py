@@ -1,4 +1,4 @@
-from downloaders import mangareader_downloader, mangastream_downloader
+from downloaders import all_manga_downloader
 import sys, getopt
 import numpy as np
 import pdb
@@ -28,11 +28,8 @@ def main(argv):
   
     print('Downloading chapter {} from manga: {}'.format(chapter, manga))
 
-    mrd = mangareader_downloader.MangaReaderDownloader()
-    mrd.download_chapter(manga, chapter)
-
-    msd = mangastream_downloader.MangaStreamDownloader()
-    msd.download_chapter(manga, chapter)
+    all_source_manga_downloader = all_manga_downloader.AllSourceMangaDownloader()
+    all_source_manga_downloader.download_chapter(manga, chapter)
 
 if __name__ == "__main__":
     main(sys.argv[1:])

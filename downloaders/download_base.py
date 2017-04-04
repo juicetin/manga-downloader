@@ -12,6 +12,10 @@ class MangaDownloader:
         self.base_url = url
 
     @abstractmethod
+    def download_chapter_succcessfully(self, manga, chapter):
+        pass
+
+    @abstractmethod
     def get_img_url_from_html(self, html):
         pass
 
@@ -22,6 +26,11 @@ class MangaDownloader:
     @abstractmethod
     def format_manga_name(self, name):
         pass
+
+    # This is currently here if in future we want to 
+    #   download chapters from a specific source exclusively
+    def download_chapter(self, manga, chapter):
+        return self.download_chapter_succcessfully(manga, chapter)
 
     def pad_number(self, num):
         """

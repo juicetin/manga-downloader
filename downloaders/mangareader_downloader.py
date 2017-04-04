@@ -32,7 +32,7 @@ class MangaReaderDownloader(download_base.MangaDownloader):
         name_parts = name.lower().split(' ')
         return '-'.join(name_parts)
 
-    def download_chapter(self, manga, chapter):
+    def download_chapter_succcessfully(self, manga, chapter):
         """
         Downloads specific chapter of manga
         """
@@ -47,10 +47,11 @@ class MangaReaderDownloader(download_base.MangaDownloader):
         if len(page_paths) == 0:
             print('Chapter: {} for manga: {} not found on MangaReader.'.format(chapter, manga))
             self.cleanup(manga, chapter)
-
+            return False
         else:
             chapter_str = str(chapter)
             os.makedirs('{}'.format(chapter_str))
             for num, page_path in enumerate(page_paths):
                 page_url = '{}{}'.format(self.base_url, page_path)
                 self.download_img_from_url(page_url, '{}/{}.jpg'.format(chapter_str, self.pad_number(num)))
+            return True
