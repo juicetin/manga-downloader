@@ -67,7 +67,8 @@ class MangaStreamDownloader(download_base.MangaDownloader):
         first_url = self.get_chapter_url(manga_fmtd, chapter)
 
         if first_url == -1:
-            raise ValueError('Chapter ' + str(chapter) + ' for ' + manga + ' is not out yet for ' + self.get_downloader_name())
+            print('Chapter: {} for manga: {} not found on MangaStream.'.format(chapter, manga))
+            self.cleanup(manga, chapter)
         else:
             # Get list of chapter page URLs
             html = request.urlopen(first_url).read().decode('utf-8')

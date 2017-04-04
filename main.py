@@ -28,8 +28,8 @@ def main(argv):
   
     print('Downloading chapter {} from manga: {}'.format(chapter, manga))
 
-    # mrd = mangareader_downloader.MangaReaderDownloader()
-    # mrd.download_chapter(manga, chapter)
+    mrd = mangareader_downloader.MangaReaderDownloader()
+    mrd.download_chapter(manga, chapter)
 
     msd = mangastream_downloader.MangaStreamDownloader()
     msd.download_chapter(manga, chapter)
