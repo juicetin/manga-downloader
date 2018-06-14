@@ -3,6 +3,7 @@ from abc import abstractmethod
 import os, sys
 
 import requests
+from urllib import request
 import shutil
 
 class MangaDownloader:
@@ -27,6 +28,17 @@ class MangaDownloader:
     def format_manga_name(self, name):
         pass
 
+    def get_page_html_decode_utf8(self, url):
+        req = request.Request(
+                url,
+                data=None, 
+                headers={
+                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'
+                    }
+                )
+
+        return request.urlopen(req).read().decode('utf-8')
+
     # This is currently here if in future we want to 
     #   download chapters from a specific source exclusively
     def download_chapter(self, manga, chapter):
@@ -46,13 +58,12 @@ class MangaDownloader:
         """
         img_url = self.get_img_url_from_html(page_url)
         print('Downloading image from url: {} as {}'.format(img_url, filename))
-        # opener.retrieve(img_url, filename)
         r = requests.get(img_url, stream=True)
         if r.status_code == 200:
             with open(filename, 'wb') as f:
                 r.raw.decode_content = True
                 shutil.copyfileobj(r.raw, f)
-    
+
     def download_chapters(self, manga, chapter_nums):
         """
         Downloads a list of chapters for a given manga

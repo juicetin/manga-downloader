@@ -40,10 +40,15 @@ class MangaReaderDownloader(download_base.MangaDownloader):
         # Grab URL
         manga = self.format_manga_name(manga)
         first_url = '{}/{}/{}'.format(self.base_url, manga, chapter)
-        html = request.urlopen(first_url).read().decode('utf-8')
+        html = self.get_page_html_decode_utf8(first_url)
 
-        # When chapter doesn't exist
-        page_paths = self.get_page_paths_from_html(html)
+        try:
+            page_paths = self.get_page_paths_from_html(html)
+        except:
+            print('error')
+            print('url: {}'.format(first_url))
+            raise
+
         if len(page_paths) == 0:
             print('Chapter: {} for manga: {} not found on MangaReader.'.format(chapter, manga))
             self.cleanup(manga, chapter)

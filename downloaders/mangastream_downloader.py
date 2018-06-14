@@ -21,7 +21,7 @@ class MangaStreamDownloader(download_base.MangaDownloader):
         """
         Extracts image url from page containing image
         """
-        html = request.urlopen(url).read().decode('utf-8')
+        html = self.get_page_html_decode_utf8(first_url)
         q = pq(html)
         img_url = q("#manga-page").attr('src')
         return img_url
@@ -38,7 +38,7 @@ class MangaStreamDownloader(download_base.MangaDownloader):
     
     def get_chapter_url(self, manga, chapter):
         url = 'http://mangastream.com/manga/{}'.format(manga)
-        html = request.urlopen(url).read().decode('utf-8')
+        html = self.get_page_html_decode_utf8(url)
         q = pq(html)
         chapter_table_items = q('.table-striped').find('a')
         # chapter_urls = [pq(item).attr('href') for item in chapter_table_items]
@@ -72,7 +72,7 @@ class MangaStreamDownloader(download_base.MangaDownloader):
             return False
         else:
             # Get list of chapter page URLs
-            html = request.urlopen(first_url).read().decode('utf-8')
+            html = self.get_page_html_decode_utf8(first_url)
             page_paths = self.get_page_paths_from_html(html)
 
             # Prepare directory
