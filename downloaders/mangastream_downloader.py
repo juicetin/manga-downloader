@@ -41,7 +41,6 @@ class MangaStreamDownloader(download_base.MangaDownloader):
         html = self.get_page_html_decode_utf8(url)
         q = pq(html)
         chapter_table_items = q('.table-striped').find('a')
-        # chapter_urls = [pq(item).attr('href') for item in chapter_table_items]
         chapter_urls = [pq(item).attr('href') for item in chapter_table_items if str(chapter) in pq(item).attr('href')]
         try:
             return chapter_urls[0]
